@@ -2,10 +2,12 @@ import express from "express";
 import {
   deleteUserProfile,
   followUser,
+  forgotPassword,
   getAllUsers,
   loginUser,
   logoutUser,
   registerUser,
+  resetPassword,
   updatePassword,
   updateProfile,
   viewUserProfile,
@@ -23,4 +25,6 @@ router.delete("/user/delete-profile", isAuthenticated, deleteUserProfile);
 router.get("/user/my-profile", isAuthenticated, viewmyProfile);
 router.get("/user/user-profile/:id", isAuthenticated, viewUserProfile);
 router.get("/user/all-users", isAuthenticated, getAllUsers);
+router.post("/user/forgot-password", forgotPassword);
+router.put("/password/reset/:resetToken", resetPassword);
 export default router;
