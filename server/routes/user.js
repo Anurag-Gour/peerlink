@@ -4,6 +4,8 @@ import {
   followUser,
   forgotPassword,
   getAllUsers,
+  getMyPosts,
+  getUserPosts,
   loginUser,
   logoutUser,
   registerUser,
@@ -27,4 +29,6 @@ router.get("/user/user-profile/:id", isAuthenticated, viewUserProfile);
 router.get("/user/all-users", isAuthenticated, getAllUsers);
 router.post("/user/forgot-password", forgotPassword);
 router.put("/password/reset/:resetToken", resetPassword);
+router.get("/user/my-posts", isAuthenticated, getMyPosts);
+router.get("/user/user-posts/:id", isAuthenticated, getUserPosts);
 export default router;

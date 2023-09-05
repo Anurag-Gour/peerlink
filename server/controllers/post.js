@@ -1,23 +1,26 @@
 import Post from "../models/Post.js";
 import User from "../models/User.js";
-
+import cloudinary from "cloudinary";
 export const createPost = async (req, res) => {
   try {
+    const myCloud = await cloudinary.v2.uploader.upload(req.body.image, {
+      folder: "posts",
+    });
     const newPostData = {
       caption: req.body.caption,
       image: {
-        public_id: "req.body.public_id",
-        url: "req.body.url",
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
       },
       owner: req.user._id,
     };
     const post = await Post.create(newPostData);
     const user = await User.findById(req.user._id);
-    user.posts.push(post._id);
+    user.posts.unshift(post._id);
     await user.save();
     res.status(201).json({
       success: true,
-      post,
+      message: "Post Created",
     });
   } catch (error) {
     res.status(500).json({
@@ -42,6 +45,7 @@ export const deletePost = async (req, res) => {
         message: "Unauthorized",
       });
     }
+    await cloudinary.v2.uploader.destroy(post.image.public_id);
     await post.deleteOne();
     const user = await User.findById(req.user._id);
     const index = user.posts.indexOf(req.params.id);
@@ -159,7 +163,7 @@ export const commentOnPost = async (req, res) => {
     if (commentIndex !== -1) {
       post.comments[commentIndex].comment = req.body.comment;
       await post.save();
-      return res.status(401).json({
+      return res.status(201).json({
         success: true,
         message: "Comment Updated",
       });
@@ -209,7 +213,7 @@ export const deleteComment = async (req, res) => {
 
       return res.status(200).json({
         success: true,
-        message: "Selected Comment has deleted",
+        message: "Selected Comment has been deleted",
       });
     } else {
       post.comments.forEach((item, index) => {
